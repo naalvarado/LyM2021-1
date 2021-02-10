@@ -1,1 +1,31 @@
-()
+( rotate back )
+
+ (if (not (blocked?) ) (walk 1) (NOP) ) 
+ 
+ (block
+ (if (not (blocked?) ) (walk 1) (NOP) ) 
+ (rotate left)
+ )
+
+(define one 1)
+
+(define foo (c p)
+ (block
+   (drop c)
+    (free p)
+      (walk one)))
+      
+(foo 1 3)
+
+(define goEnd ()
+ (if (not (blocked?))
+       (block
+         (walk 1)
+         (goEnd)
+         )
+          (NOP)
+   )
+ )
+ 
+
+
