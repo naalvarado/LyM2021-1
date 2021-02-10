@@ -11,9 +11,17 @@ import java.io.*;
 //CREE LOS ARREGLOS QUE CONTIENEN TODOS LOS COMANDOS Y LOS TIPOS POSIBLES DE PARAMETROS, AUNQUE
 //FALTA EL TIPO n QUE SON NUMEROS Y VARIABLES PERO PSS ES SOLO REVISAR SI ES UN NUMERO O SI 
 //ESTA EN EL HASH 
+
+//Faltaria entonces los bloques de instrucciones y las condicionales 
+
 //POR AHORA REVISA 
 //1. QUE COMIENCE CON PARENTESIS
 //2. QUE HALLA EL MISMO NUMERO DE PARENTESIS DE ABRIR QUE DE CERRAR 
+//3.Que la estructura de los metodos (walk, rotate look drop free pick grab ) tengan la estructura
+//(comando x) con los respectivos parametros
+//4. que el comando walkTo tenga la estructura (walkTo x1 x2)
+//5.que el comando (NOP) este bien  definido
+//6. se guardan las variables definidas como variables y dentro de las funciones en el Hash 
 
 public class Robot {
 
@@ -188,22 +196,71 @@ public class Robot {
 		for(int i = 0; i < input_List.length; i++) {
 			boolean esComando = comandos.contains(input_List[i]);
 			if(esComando) {
-				if(input_List[i].equals("walk")) {
-					if(!input_List[i-1].equals("(")) {
-						System.out.println("Error: falta '(' antes del 'walk'.");
+				if(!input_List[i-1].equals("(")) {
+					System.out.println("Error: falta '(' antes del 'comando'." +input_List[i] );
+					return false;
+				}
+				if(!(input_List[i].equals("walkTo") | input_List[i].equals("NOP") | input_List[i].equals("if")| input_List[i].equals("block") | input_List[i].equals("define") ) )
+					{
+					if(!input_List[i+2].equals(")")) 
+					{
+						System.out.println("Error: falta el ')' del 'COMANDO'."  + input_List[i] );
 						return false;
-					}
+					} 
+					 }
+				
+				if(input_List[i].equals("walk")
+					|	input_List[i].equals("drop")
+					|	input_List[i].equals("free")
+					|	input_List[i].equals("pick")
+					|	input_List[i].equals("grab")) {
+					
 					boolean esVar = variables.containsKey(input_List[i+1]);
 					boolean esInt = isNumeric(input_List[i+1]);
 					if(!esVar && !esInt) {
 						System.out.println("Error: se esperaba una variable o un numero pero se encontro: " + input_List[i+1]);
 						return false;
 					}
-					if(!input_List[i+2].equals(")")) {
-						System.out.println("Error: falta el ')' del 'walk'.");
+					
+				}
+			 if ((input_List[i].equals("rotate"))){
+				 if((!esD(input_List[i+1]))){
+					 System.out.println("Error: deberia ser un valor 'left right o back' pero se introdujo." + input_List[i+1]);
+						return false;
+				 }
+			 }
+			 if ((input_List[i].equals("look"))){
+				 if((!esO(input_List[i+1]))){
+					 System.out.println("Error: deberia ser un valor O = N, E , W , S pero se introdujo." + input_List[i+1]);
+						return false;
+				 }
+			 }
+			 
+			 if ((input_List[i].equals("walkTo"))){
+				 boolean esVar = variables.containsKey(input_List[i+1]);
+					boolean esInt = isNumeric(input_List[i+1]);
+					if(!esVar && !esInt) {
+						System.out.println("Error: se esperaba una variable o un numero pero se encontro: " + input_List[i+1]);
 						return false;
 					}
-				}
+					
+					 if((!esO(input_List[i+2]))){
+						 System.out.println("Error: deberia ser un valor O = N, E , W , S pero se introdujo." + input_List[i+1]);
+							return false;
+					 }
+					 if(!input_List[i+3].equals(")")){
+						 System.out.println("Error: falta el ) del walk to" + input_List[i+1]);
+							return false;
+					 }
+			 }
+			 
+			 if ((input_List[i].equals("NOP"))){
+				 if(!(input_List[i+1]).equals(")")){
+					 System.out.println("Error: deberia ser ')' pero se introdujo." + input_List[i+1]);
+						return false;
+				 }
+			 }
+			 
 			}
 		}
 
@@ -272,18 +329,40 @@ public class Robot {
 		boolean re = true;
 		for(int i = 0; i < in.length; i++) {
 			if (in[i].equals("define")) {
-				if(!in[i+2].equals("(")) {
+				
+				//si es definicion de una variable
 					if(isNumeric(in[i+2])) {
 						int v = Integer.parseInt(in[i+2]);
 						variables.put(in[i+1], v);
+						if (!in[i+3].equals(")")){
+							System.out.println("Error: no se esta cerrando la definicion de variable");
+							return false;
+						}
 					}
-					else {
-						re = false;
+			//si es definicion de una funcion
+					else if (in[i+2].equals("(")){
+						int j=3;
+						while(!in[i+j].equals(")")){
+							variables.put(in[i+j], 0);
+							
+							if(in[i+j].equals("(")){
+								System.out.println("Error: no se cerro la definicion correctamente");
+							return false;
+							}
+							
+							j=j+1;
+						}
 					}
-				}
+					else{
+						re=false;
+					}
+				
+		
 			}
 		}
 		return re;
 	}
+
+	
 
 }
