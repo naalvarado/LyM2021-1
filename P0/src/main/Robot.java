@@ -287,31 +287,24 @@ public class Robot {
 				}
 				
 				if ((input_List[i].equals("not"))) {
-					if (!(input_List[i + 1]).equals("(")) {
-						System.out.println("Error: deberia ser '(' pero se introdujo." + input_List[i + 1]);
+					if(!checkNot(input_List,i)) {
 						return false;
 					}
-					if (!(input_List[i + 2]).equals("blocked?") | input_List[i + 2].equals("facing?")
-							| input_List[i + 2].equals("can")) {
-						System.out.println(
-								"Error: deberia ser alguno de los siguientes 'blocked?','facing?','can' pero se introdujo."
-										+ input_List[i + 1]);
+				}
+				
+				if (input_List[i].equals("if")) {
+					if(input_List[i+1].equals("(")) {
+						if(input_List[i+2].equals("blocked?") | input_List[i+2].equals("facing?") | input_List[i+2].equals("can") | input_List[i+2].equals("not")) {
+							if(!checkAllConds(input_List,i+2)) {
+								return false;
+							}
+						}
+						else {
+							return false;
+						}
+					}
+					else {
 						return false;
-					}
-					if(input_List[i+2].equals("bloqued?")) {
-						if(!checkBloqued(input_List,i+2)) {
-							return false;
-						}
-					}
-					if(input_List[i+2].equals("facing?")) {
-						if(!checkFacingLook(input_List,i+2)) {
-							return false;
-						}
-					}
-					if(input_List[i+2].equals("can")) {
-						if(!checkCan(input_List,i+2)) {
-							return false;
-						}
 					}
 				}
 
@@ -450,6 +443,53 @@ public class Robot {
 		else {
 			return true;
 		}
+	}
+	
+	public static boolean checkNot(String[] list, int pos) {
+		if (!(list[pos + 1]).equals("(")) {
+			System.out.println("Error: deberia ser '(' pero se introdujo." + list[pos + 1]);
+			return false;
+		}
+		if (!(list[pos + 2]).equals("blocked?") | list[pos + 2].equals("facing?")
+				| list[pos + 2].equals("can")) {
+			System.out.println(
+					"Error: deberia ser alguno de los siguientes 'blocked?','facing?','can' pero se introdujo."
+							+ list[pos + 1]);
+			return false;
+		}
+		if(list[pos+2].equals("bloqued?")) {
+			if(!checkBloqued(list,pos+2)) {
+				return false;
+			}
+		}
+		if(list[pos+2].equals("facing?")) {
+			if(!checkFacingLook(list,pos+2)) {
+				return false;
+			}
+		}
+		if(list[pos+2].equals("can")) {
+			if(!checkCan(list,pos+2)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean checkAllConds(String[] list, int pos) {
+		boolean re = true;
+		if(list[pos].equals("blocked?")) {
+			re = checkBloqued(list,pos);
+		}
+		else if(list[pos].equals("facing?")) {
+			re = checkFacingLook(list,pos);
+		}
+		else if(list[pos].equals("can")) {
+			re = checkCan(list,pos);
+		}
+		else {
+			re = checkNot(list,pos);
+		}
+		return re;
 	}
 
 }
