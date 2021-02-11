@@ -22,6 +22,8 @@ import java.io.*;
 //4. que el comando walkTo tenga la estructura (walkTo x1 x2)
 //5.que el comando (NOP) este bien  definido
 //6. se guardan las variables definidas como variables y dentro de las funciones en el Hash 
+//7. se guardan los nombres de las funciones con el numero de atributos que tiene 
+//8. se verifica que no hallan cosas del tipo (x) o (0 0 0) o ( one one )
 
 public class Robot {
 
@@ -29,6 +31,13 @@ public class Robot {
 	 * Estructura que guarda las variables declaradas
 	 */
 	public static Hashtable<String, Integer> variables = new Hashtable<String, Integer>();
+	
+
+	/**
+	 * Estructura que guarda las funciones declaradas, usando el nombre de la funcion  como 
+	 * llave y la cantidad de parametros como value
+	 */
+	public static Hashtable<String, Integer> funciones = new Hashtable<String, Integer>();
 
 	/**
 	 * variable que guarda el contenido del documento
@@ -167,15 +176,34 @@ public class Robot {
 		// numero de parentesis cerrados
 
 		if (!input_List[0].equals("(")) {
+			System.out.println("Error: deberia iniciar por parentesis");
 			return valido = false;
 			// debe iniciar por parentesis
 		}
+		
+		// Guardamos las variables y las funciones en el hashtable
+				boolean vars = llenarHash(input_List);
+				if (!vars) {
+					// Si una variable esta mal declarada se retorna false.
+					return false;
+				}
 
 		for (int i = 0; i < input_List.length; ++i) {
 			String a = input_List[i];
-			// System.out.println(a);
 			if (a.equals("(")) {
 				abiertos = abiertos + 1;
+				if (isNumeric(input_List[i+1])|| (!(esFuncion(input_List[i+1]) || esComando(input_List[i+1]) || input_List[i+1].equals(")"))) ){
+					if(variables.containsKey(input_List[i+1])){
+						if(!input_List[i-2].equals("define")){
+							System.out.println("Error : no puede haber una variable inmediatamente despues de un parentesis : " + input_List[i+1] );
+							return false;
+						}
+					}
+					else{
+					System.out.println("despues del parentesis debe haber una funcion o un comando no : " + input_List[i+1] );
+					return false; 
+					}
+				}
 			}
 			if (a.equals(")")) {
 				abiertos = abiertos - 1;
@@ -186,16 +214,12 @@ public class Robot {
 
 		}
 		if (abiertos != 0) {
+			System.out.println("Error: hace falta un parentesis");
 			return valido = false;
 			// no hace falta ni sobra ningun parentesis
 		}
 
-		// Guardamos las variables en el hashtable
-		boolean vars = llenarHash(input_List);
-		if (!vars) {
-			// Si una variable esta mal declarada se retorna false.
-			return false;
-		}
+		
 
 		// Acá empesamos a verificar que este bien escrito el programa
 		for (int i = 0; i < input_List.length; i++) {
@@ -206,7 +230,7 @@ public class Robot {
 					return false;
 				}
 				// Se revisa que todos los metodos que tengan un solo parametro por entrada tengan el ')'
-				// Se inclulle el not porque tiene como parametro otro comando y eso cambia el orden de paréntesis
+				// Se incluye el not porque tiene como parametro otro comando y eso cambia el orden de paréntesis
 				if (!(input_List[i].equals("walkTo") | input_List[i].equals("NOP") | input_List[i].equals("if")
 						| input_List[i].equals("block") | input_List[i].equals("define")
 						| input_List[i].equals("blocked?") | input_List[i].equals("not"))) {
@@ -309,6 +333,36 @@ public class Robot {
 				}
 
 			}
+			
+			if (esFuncion(input_List[i])){
+				int j=funciones.get(input_List[i]);
+				for (int k=j; j>0;j--){
+					boolean esVar = variables.containsKey(input_List[i + k]);
+					boolean esInt = isNumeric(input_List[i + k]);
+					if (!esVar && !esInt) {
+							System.out.println(
+									"Error: se esperaba una variable o un numero pero se encontro: " + input_List[i + 1] + "no se cumplen los parametros de la funcion");
+							return false;
+						}
+					
+				}
+					
+			}
+			if(!esFuncion(input_List[i]) && !esComando(input_List[i]) && !input_List[i].equals("(")
+					&& !input_List[i].equals(")") && !(esD(input_List[i]) | esO(input_List[i]) |isNumeric(input_List[i] ))
+					&& !variables.containsKey(input_List[i])){
+				System.out.println("Error: comando desconocido: " + input_List[i] );
+				return false;
+				
+			}
+			
+			if(input_List[i].equals("(") &&  input_List[i+2].equals(")")){
+				if(isNumeric(input_List[i+1])|| variables.containsKey(input_List[i+1])){
+					System.out.println("no puede haber algo de la forma ( x )");
+					return false;
+				}
+			}
+			
 		}
 
 		return valido;
@@ -401,6 +455,8 @@ public class Robot {
 
 						j = j + 1;
 					}
+				funciones.put(in[i+1], j-3);
+					
 				} else {
 					re = false;
 				}
@@ -473,6 +529,15 @@ public class Robot {
 			}
 		}
 		return true;
+	}
+	
+	public static boolean esFuncion(String a ){
+		boolean resp=false;
+		if (funciones.containsKey(a)){
+			resp=true;
+		}
+		
+		return resp;
 	}
 	
 	public static boolean checkAllConds(String[] list, int pos) {
