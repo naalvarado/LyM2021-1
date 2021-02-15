@@ -318,17 +318,52 @@ public class Robot {
 					}
 				}
 
+				// Es un if?
 				if (input_List[i].equals("if")) {
+					// Si es una if miramos que tennga un condicional
 					if (input_List[i + 1].equals("(")) {
 						if (input_List[i + 2].equals("blocked?") | input_List[i + 2].equals("facing?")
 								| input_List[i + 2].equals("can") | input_List[i + 2].equals("not")) {
+							// Si tiene un condicional miramos que este bien
 							if (!checkAllConds(input_List, i + 2)) {
 								return false;
 							}
+							// miramos que tenga dos comandos para el caso en que el condicional es 'blocked?'
+							if(input_List[i+2].equals("blocked?")) {
+								if(!checkNoComanIf(input_List, i+4)) {
+									System.out.println("Error: Le faltan o le sobran comendos al if");
+									return false;
+								}
+							}
+							// miramos que tenga dos comandos para el caso en que el condicional es 'facing?' o 'can'
+							else if(input_List[i+2].equals("facing?") || input_List[i+2].equals("can")) {
+								if(!checkNoComanIf(input_List, i+5)) {
+									System.out.println("Error: Le faltan o le sobran comendos al if");
+									return false;
+								}
+							}
+							// miramos que tenga dos comandos para el caso en que el condicional es 'not'
+							else if(input_List[i+2].equals("not")) {
+								// not puede tener un 'blocked?' o 'facing?' o 'can' adentro
+								if(input_List[i+4].equals("blocked?")) {
+									if(!checkNoComanIf(input_List, i+7)) {
+										System.out.println("Error: Le faltan o le sobran comendos al if");
+										return false;
+									}
+								}
+								else {
+									if(!checkNoComanIf(input_List, i+8)) {
+										System.out.println("Error: Le faltan o le sobran comendos al if");
+										return false;
+									}
+								}
+							}
 						} else {
+							System.out.println("Error: falta el condicional del if, se esperaba un condicional pero se encontro: " + input_List[i+2]);
 							return false;
 						}
 					} else {
+						System.out.println("Error: el if no puede ser vacio");
 						return false;
 					}
 				}
@@ -551,98 +586,38 @@ public class Robot {
 		}
 		return re;
 	}
-	
+
 	/**
 	 * Metodo para verificar que el if tiene solo dos comandos (ni mas ni menos)
-	 * @param pos La posicion dell primer comando del if
+	 * 
+	 * @param pos La posicion del paréntecis del primer comando del if
 	 */
 	public static boolean checkNoComanIf(String[] list, int pos) {
-		if (list[pos].equals("walk") || list[pos].equals("drop") || list[pos].equals("free")
-				|| list[pos].equals("pick") || list[pos].equals("grab") || list[pos].equals("rotate") || list[pos].equals("look")) {
-			if (list[pos+4].equals("walk") || list[pos+4].equals("drop") || list[pos+4].equals("free")
-					|| list[pos+4].equals("pick") || list[pos+4].equals("grab") || list[pos+4].equals("rotate") || list[pos+4].equals("look")) {
-				if(list[pos+7].equals(")")) {
-					return true;
-				}
-				else {
-					System.out.println("Error: el if tiene que tener dos comandos.");
-					return false;
-				}
+		boolean re = true;
+		int contPar = 0;
+		int contComm = 0;
+		for(int i = pos; i < list.length; i++) {
+			if(list[i].equals("(")) {
+				contPar++;
 			}
-			else if(list[pos+4].equals("walkTo")) {
-				if(list[pos+8].equals(")")) {
-					return true;
-				}
-				else {
-					return false;
-				}
+			if(list[i].equals(")")) {
+				contPar--;
 			}
-			else if(list[pos+4].equals("NOP")) {
-				if(list[pos+6].equals(")")) {
-					return true;
+			if(contPar == 0) {
+				contComm++;
+			}
+			if(contComm == 2) {
+				if(list[i+1].equals(")")) {
+					re = true;
+					break;
 				}
 				else {
-					return false;
+					re = false;
+					break;
 				}
 			}
 		}
-		else if(list[pos].equals("walkTo")) {
-			if (list[pos+5].equals("walk") || list[pos+5].equals("drop") || list[pos+5].equals("free")
-					|| list[pos+5].equals("pick") || list[pos+5].equals("grab") || list[pos+5].equals("rotate") || list[pos+5].equals("look")) {
-				if(list[pos+8].equals(")")) {
-					return true;
-				}
-				else {
-					System.out.println("Error: el if tiene que tener dos comandos.");
-					return false;
-				}
-			}
-			else if(list[pos+5].equals("walkTo")) {
-				if(list[pos+9].equals(")")) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else if(list[pos+5].equals("NOP")) {
-				if(list[pos+7].equals(")")) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-		}
-		else if(list[pos].equals("NOP")) {
-			if (list[pos+3].equals("walk") || list[pos+3].equals("drop") || list[pos+3].equals("free")
-					|| list[pos+3].equals("pick") || list[pos+3].equals("grab") || list[pos+3].equals("rotate") || list[pos+3].equals("look")) {
-				if(list[pos+6].equals(")")) {
-					return true;
-				}
-				else {
-					System.out.println("Error: el if tiene que tener dos comandos.");
-					return false;
-				}
-			}
-			else if(list[pos+3].equals("walkTo")) {
-				if(list[pos+7].equals(")")) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else if(list[pos+3].equals("NOP")) {
-				if(list[pos+5].equals(")")) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-		}
-		return true;
+		return re;
 	}
 
 }
