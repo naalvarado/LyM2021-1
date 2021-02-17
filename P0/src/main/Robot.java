@@ -168,7 +168,10 @@ public class Robot {
 	}
 
 	public static boolean verificador(String[] input_List) {
+		
 		boolean valido = true;
+		try{
+		
 
 		// inicialmente veriicamos que el numero de parentesis abiertos sea el mismo que
 		// el
@@ -369,20 +372,32 @@ public class Robot {
 				}
 
 			}
-
-			if (esFuncion(input_List[i])) {
+//aqui debe verificar el numero de parametros
+			if (esFuncion(input_List[i]) && !input_List[i-1].equals("define")) {
+				
 				int j = funciones.get(input_List[i]);
-				for (int k = j; j > 0; j--) {
-					boolean esVar = variables.containsKey(input_List[i + k]);
+				for (int k = j; k > 0; k--) {
+					boolean esVar = (variables.containsKey(input_List[i + k]));
+					if(esVar ){
+						if(variables.get(input_List[i + k])<0){
+							System.out.println("Error: no puedes llamar una variable no declarada");
+							return false;
+						}
+					}
 					boolean esInt = isNumeric(input_List[i + k]);
 					if (!esVar && !esInt) {
 						System.out.println("Error: se esperaba una variable o un numero pero se encontro: "
-								+ input_List[i + 1] + "no se cumplen los parametros de la funcion");
+								+ input_List[i + 1] + " no se cumplen los parametros de la funcion");
 						return false;
 					}
 
 				}
-
+				
+				if(!input_List[i + j+1].equals(")")){
+					System.out.println("Error: hay menos o mas parametros de los solicitados");
+					return false;
+				}
+				
 			}
 			if (!esFuncion(input_List[i]) && !esComando(input_List[i]) && !input_List[i].equals("(")
 					&& !input_List[i].equals(")")
@@ -399,7 +414,11 @@ public class Robot {
 					return false;
 				}
 			}
-
+			
+		}
+		}
+		catch (Exception e) {
+			valido=false;
 		}
 
 		return valido;
@@ -483,7 +502,7 @@ public class Robot {
 				else if (in[i + 2].equals("(")) {
 					int j = 3;
 					while (!in[i + j].equals(")")) {
-						variables.put(in[i + j], 0);
+						variables.put(in[i + j], -1);
 
 						if (in[i + j].equals("(")) {
 							System.out.println("Error: no se cerro la definicion correctamente");
