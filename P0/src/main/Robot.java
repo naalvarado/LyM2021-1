@@ -5,25 +5,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.*;
 
-//*EN input SE TIENE UNA CADENA CON LA ENTRADA DEL ARHIVO EN LA QUE CADA PALABRA O CARACTER ESTA
-//SEPARADA POR UN UNICO ESPACIO 
-//*EN input_List TIENES CADA PALABRA O CARACTER EN UNA POSICION DEL ARREGLO}
-//CREE LOS ARREGLOS QUE CONTIENEN TODOS LOS COMANDOS Y LOS TIPOS POSIBLES DE PARAMETROS, AUNQUE
-//FALTA EL TIPO n QUE SON NUMEROS Y VARIABLES PERO PSS ES SOLO REVISAR SI ES UN NUMERO O SI 
-//ESTA EN EL HASH 
-
-//Faltaria entonces los bloques de instrucciones y las condicionales 
-
-//POR AHORA REVISA 
-//1. QUE COMIENCE CON PARENTESIS
-//2. QUE HALLA EL MISMO NUMERO DE PARENTESIS DE ABRIR QUE DE CERRAR 
-//3.Que la estructura de los metodos (walk, rotate look drop free pick grab ) tengan la estructura
-//(comando x) con los respectivos parametros
-//4. que el comando walkTo tenga la estructura (walkTo x1 x2)
-//5.que el comando (NOP) este bien  definido
-//6. se guardan las variables definidas como variables y dentro de las funciones en el Hash 
-//7. se guardan los nombres de las funciones con el numero de atributos que tiene 
-//8. se verifica que no hallan cosas del tipo (x) o (0 0 0) o ( one one )
+// EN input SE TIENE UNA CADENA CON LA ENTRADA DEL ARHIVO EN LA QUE CADA PALABRA O CARACTER ESTA
+// SEPARADA POR UN UNICO ESPACIO 
+// EN input_List TIENES CADA PALABRA O CARACTER EN UNA POSICION DEL ARREGLO
 
 public class Robot {
 
@@ -54,11 +38,6 @@ public class Robot {
 	public static ArrayList<String> comandos = new ArrayList<>();
 
 	/**
-	 * Lista de condicionales
-	 */
-	public static ArrayList<String> condicionales = new ArrayList<>();
-
-	/**
 	 * Lista de posibles argumentos D = left, right , back
 	 */
 	public static ArrayList<String> D = new ArrayList<>();
@@ -69,8 +48,8 @@ public class Robot {
 	public static ArrayList<String> O = new ArrayList<>();
 
 	/**
-	 * Main del programa , se realiza la lectura de la entrada por teclado y se
-	 * llama al metodo que lo va a interpretar
+	 * Main del programa , se realiza la lectura de la entrada y se llama al metodo
+	 * que lo va a interpretar
 	 */
 	public static void main(String[] args) throws IOException {
 
@@ -93,11 +72,6 @@ public class Robot {
 		comandos.add("facing?");
 		comandos.add("can");
 		comandos.add("not");
-
-		// condicionales.add("blocked");
-		// condicionales.add("facing");
-		// condicionales.add("can");
-		// condicionales.add("not");
 
 		D.add("left");
 		D.add("right");
@@ -147,7 +121,7 @@ public class Robot {
 	}
 
 	/**
-	 * Separe este metodo para que el verificador no quede tan largo
+	 * Metodo para poner todo el codigo del robot en un arreglo de Strings
 	 * 
 	 * @return retorna la lista de palabras del documento
 	 */
@@ -168,257 +142,254 @@ public class Robot {
 	}
 
 	public static boolean verificador(String[] input_List) {
-		
+
 		boolean valido = true;
-		try{
-		
+		try {
 
-		// inicialmente veriicamos que el numero de parentesis abiertos sea el mismo que
-		// el
-		// numero de parentesis cerrados
-
-		if (!input_List[0].equals("(")) {
-			System.out.println("Error: deberia iniciar por parentesis");
-			return valido = false;
-			// debe iniciar por parentesis
-		}
-
-		// Guardamos las variables y las funciones en el hashtable
-		boolean vars = llenarHash(input_List);
-		if (!vars) {
-			// Si una variable esta mal declarada se retorna false.
-			return false;
-		}
-
-		for (int i = 0; i < input_List.length; ++i) {
-			String a = input_List[i];
-			if (a.equals("(")) {
-				abiertos = abiertos + 1;
-				if (isNumeric(input_List[i + 1]) || (!(esFuncion(input_List[i + 1]) || esComando(input_List[i + 1])
-						|| input_List[i + 1].equals(")")))) {
-					if (variables.containsKey(input_List[i + 1])) {
-						if (!input_List[i - 2].equals("define")) {
-							System.out.println(
-									"Error : no puede haber una variable inmediatamente despues de un parentesis : "
-											+ input_List[i + 1]);
-							return false;
-						}
-					} else {
-						System.out.println(
-								"despues del parentesis debe haber una funcion o un comando no : " + input_List[i + 1]);
-						return false;
-					}
-				}
-			}
-			if (a.equals(")")) {
-				abiertos = abiertos - 1;
-				if (abiertos < 0) {
-					valido = false;
-				}
+			if (!input_List[0].equals("(")) {
+				System.out.println("Error: deberia iniciar por parentesis");
+				return valido = false;
 			}
 
-		}
-		if (abiertos != 0) {
-			System.out.println("Error: hace falta un parentesis");
-			return valido = false;
-			// no hace falta ni sobra ningun parentesis
-		}
+			// Guardamos las variables y las funciones en el hashtable
+			boolean vars = llenarHash(input_List);
+			if (!vars) {
+				// Si una variable esta mal declarada se retorna false.
+				return false;
+			}
 
-		// Acá empesamos a verificar que este bien escrito el programa
-		for (int i = 0; i < input_List.length; i++) {
-			boolean esComando = comandos.contains(input_List[i]);
-			if (esComando) {
-				if (!input_List[i - 1].equals("(")) {
-					System.out.println("Error: falta '(' antes del 'comando'." + input_List[i]);
-					return false;
-				}
-				// Se revisa que todos los metodos que tengan un solo parametro por entrada
-				// tengan el ')'
-				// Se incluye el not porque tiene como parametro otro comando y eso cambia el
-				// orden de paréntesis
-				if (!(input_List[i].equals("walkTo") | input_List[i].equals("NOP") | input_List[i].equals("if")
-						| input_List[i].equals("block") | input_List[i].equals("define")
-						| input_List[i].equals("blocked?") | input_List[i].equals("not"))) {
-					if (!input_List[i + 2].equals(")")) {
-						System.out.println("Error: falta el ')' del 'COMANDO'." + input_List[i]);
-						return false;
-					}
-				}
-
-				if (input_List[i].equals("walk") | input_List[i].equals("drop") | input_List[i].equals("free")
-						| input_List[i].equals("pick") | input_List[i].equals("grab")) {
-
-					boolean esVar = variables.containsKey(input_List[i + 1]);
-					boolean esInt = isNumeric(input_List[i + 1]);
-					if (!esVar && !esInt) {
-						System.out.println(
-								"Error: se esperaba una variable o un numero pero se encontro: " + input_List[i + 1]);
-						return false;
-					}
-
-				}
-				if (input_List[i].equals("rotate")) {
-					if ((!esD(input_List[i + 1]))) {
-						System.out.println("Error: deberia ser un valor 'left right o back' pero se introdujo."
-								+ input_List[i + 1]);
-						return false;
-					}
-				}
-				if (input_List[i].equals("look") | input_List[i].equals("facing?")) {
-					if (!checkFacingLook(input_List, i)) {
-						return false;
-					}
-				}
-
-				if ((input_List[i].equals("walkTo"))) {
-					boolean esVar = variables.containsKey(input_List[i + 1]);
-					boolean esInt = isNumeric(input_List[i + 1]);
-					if (!esVar && !esInt) {
-						System.out.println(
-								"Error: se esperaba una variable o un numero pero se encontro: " + input_List[i + 1]);
-						return false;
-					}
-
-					if ((!esO(input_List[i + 2]))) {
-						System.out.println(
-								"Error: deberia ser un valor O = N, E , W , S pero se introdujo." + input_List[i + 1]);
-						return false;
-					}
-					if (!input_List[i + 3].equals(")")) {
-						System.out.println("Error: falta el ) del walk to" + input_List[i + 1]);
-						return false;
-					}
-				}
-
-				if ((input_List[i].equals("NOP"))) {
-					if (!(input_List[i + 1]).equals(")")) {
-						System.out.println("Error: deberia ser ')' pero se introdujo." + input_List[i + 1]);
-						return false;
-					}
-				}
-
-				if ((input_List[i].equals("blocked?"))) {
-					if (!checkBloqued(input_List, i)) {
-						return false;
-					}
-				}
-
-				if ((input_List[i].equals("NOP"))) {
-					if (!(input_List[i + 1]).equals(")")) {
-						System.out.println("Error: deberia ser ')' pero se introdujo." + input_List[i + 1]);
-						return false;
-					}
-				}
-				if ((input_List[i].equals("can"))) {
-					if (!checkCan(input_List, i)) {
-						return false;
-					}
-				}
-
-				if ((input_List[i].equals("not"))) {
-					if (!checkNot(input_List, i)) {
-						return false;
-					}
-				}
-
-				// Es un if?
-				if (input_List[i].equals("if")) {
-					// Si es una if miramos que tennga un condicional
-					if (input_List[i + 1].equals("(")) {
-						if (input_List[i + 2].equals("blocked?") | input_List[i + 2].equals("facing?")
-								| input_List[i + 2].equals("can") | input_List[i + 2].equals("not")) {
-							// Si tiene un condicional miramos que este bien
-							if (!checkAllConds(input_List, i + 2)) {
+			// inicialmente veriicamos que el numero de parentesis abiertos sea el mismo que
+			// el
+			// numero de parentesis cerrados
+			for (int i = 0; i < input_List.length; ++i) {
+				String a = input_List[i];
+				if (a.equals("(")) {
+					abiertos = abiertos + 1;
+					if (isNumeric(input_List[i + 1]) || (!(esFuncion(input_List[i + 1]) || esComando(input_List[i + 1])
+							|| input_List[i + 1].equals(")")))) {
+						if (variables.containsKey(input_List[i + 1])) {
+							if (!input_List[i - 2].equals("define")) {
+								System.out.println(
+										"Error : no puede haber una variable inmediatamente despues de un parentesis : "
+												+ input_List[i + 1]);
 								return false;
 							}
-							// miramos que tenga dos comandos para el caso en que el condicional es 'blocked?'
-							if(input_List[i+2].equals("blocked?")) {
-								if(!checkNoComanIf(input_List, i+4)) {
-									System.out.println("Error: Le faltan o le sobran comendos al if");
+						} else {
+							System.out.println("despues del parentesis debe haber una funcion o un comando no : "
+									+ input_List[i + 1]);
+							return false;
+						}
+					}
+				}
+				if (a.equals(")")) {
+					abiertos = abiertos - 1;
+					if (abiertos < 0) {
+						valido = false;
+					}
+				}
+
+			}
+			if (abiertos != 0) {
+				System.out.println("Error: hace falta un parentesis");
+				return valido = false;
+			}
+
+			// Acá empesamos a verificar que este bien escrito el programa
+			for (int i = 0; i < input_List.length; i++) {
+				boolean esComando = comandos.contains(input_List[i]);
+				if (esComando) {
+					if (!input_List[i - 1].equals("(")) {
+						System.out.println("Error: falta '(' antes del 'comando'." + input_List[i]);
+						return false;
+					}
+					// Se revisa que todos los metodos que tengan un solo parametro por entrada
+					// tengan el ')'
+					if (!(input_List[i].equals("walkTo") | input_List[i].equals("NOP") | input_List[i].equals("if")
+							| input_List[i].equals("block") | input_List[i].equals("define")
+							| input_List[i].equals("blocked?") | input_List[i].equals("not"))) {
+						if (!input_List[i + 2].equals(")")) {
+							System.out.println("Error: falta el ')' del 'COMANDO'." + input_List[i]);
+							return false;
+						}
+					}
+
+					if (input_List[i].equals("walk") | input_List[i].equals("drop") | input_List[i].equals("free")
+							| input_List[i].equals("pick") | input_List[i].equals("grab")) {
+
+						boolean esVar = variables.containsKey(input_List[i + 1]);
+						boolean esInt = isNumeric(input_List[i + 1]);
+						if (!esVar && !esInt) {
+							System.out.println("Error: se esperaba una variable o un numero pero se encontro: "
+									+ input_List[i + 1]);
+							return false;
+						}
+
+					}
+					if (input_List[i].equals("rotate")) {
+						if ((!esD(input_List[i + 1]))) {
+							System.out.println("Error: deberia ser un valor 'left right o back' pero se introdujo."
+									+ input_List[i + 1]);
+							return false;
+						}
+					}
+					if (input_List[i].equals("look") | input_List[i].equals("facing?")) {
+						if (!checkFacingLook(input_List, i)) {
+							return false;
+						}
+					}
+
+					if ((input_List[i].equals("walkTo"))) {
+						boolean esVar = variables.containsKey(input_List[i + 1]);
+						boolean esInt = isNumeric(input_List[i + 1]);
+						if (!esVar && !esInt) {
+							System.out.println("Error: se esperaba una variable o un numero pero se encontro: "
+									+ input_List[i + 1]);
+							return false;
+						}
+
+						if ((!esO(input_List[i + 2]))) {
+							System.out.println("Error: deberia ser un valor O = N, E , W , S pero se introdujo."
+									+ input_List[i + 1]);
+							return false;
+						}
+						if (!input_List[i + 3].equals(")")) {
+							System.out.println("Error: falta el ) del walk to" + input_List[i + 1]);
+							return false;
+						}
+					}
+
+					if ((input_List[i].equals("NOP"))) {
+						if (!(input_List[i + 1]).equals(")")) {
+							System.out.println("Error: deberia ser ')' pero se introdujo." + input_List[i + 1]);
+							return false;
+						}
+					}
+
+					if ((input_List[i].equals("blocked?"))) {
+						if (!checkBloqued(input_List, i)) {
+							return false;
+						}
+					}
+
+					if ((input_List[i].equals("NOP"))) {
+						if (!(input_List[i + 1]).equals(")")) {
+							System.out.println("Error: deberia ser ')' pero se introdujo." + input_List[i + 1]);
+							return false;
+						}
+					}
+					if ((input_List[i].equals("can"))) {
+						if (!checkCan(input_List, i)) {
+							return false;
+						}
+					}
+
+					if ((input_List[i].equals("not"))) {
+						if (!checkNot(input_List, i)) {
+							return false;
+						}
+					}
+
+					// Es un if?
+					if (input_List[i].equals("if")) {
+						// Si es un if miramos que tennga un condicional
+						if (input_List[i + 1].equals("(")) {
+							if (input_List[i + 2].equals("blocked?") | input_List[i + 2].equals("facing?")
+									| input_List[i + 2].equals("can") | input_List[i + 2].equals("not")) {
+								// Si tiene un condicional miramos que este bien
+								if (!checkAllConds(input_List, i + 2)) {
 									return false;
 								}
-							}
-							// miramos que tenga dos comandos para el caso en que el condicional es 'facing?' o 'can'
-							else if(input_List[i+2].equals("facing?") || input_List[i+2].equals("can")) {
-								if(!checkNoComanIf(input_List, i+5)) {
-									System.out.println("Error: Le faltan o le sobran comendos al if");
-									return false;
-								}
-							}
-							// miramos que tenga dos comandos para el caso en que el condicional es 'not'
-							else if(input_List[i+2].equals("not")) {
-								// not puede tener un 'blocked?' o 'facing?' o 'can' adentro
-								if(input_List[i+4].equals("blocked?")) {
-									if(!checkNoComanIf(input_List, i+7)) {
+								// miramos que tenga dos comandos para el caso en que el condicional es
+								// 'blocked?'
+								if (input_List[i + 2].equals("blocked?")) {
+									if (!checkNoComanIf(input_List, i + 4)) {
 										System.out.println("Error: Le faltan o le sobran comendos al if");
 										return false;
 									}
 								}
-								else {
-									if(!checkNoComanIf(input_List, i+8)) {
+								// miramos que tenga dos comandos para el caso en que el condicional es
+								// 'facing?' o 'can'
+								else if (input_List[i + 2].equals("facing?") || input_List[i + 2].equals("can")) {
+									if (!checkNoComanIf(input_List, i + 5)) {
 										System.out.println("Error: Le faltan o le sobran comendos al if");
 										return false;
 									}
 								}
+								// miramos que tenga dos comandos para el caso en que el condicional es 'not'
+								else if (input_List[i + 2].equals("not")) {
+									// not puede tener un 'blocked?' o 'facing?' o 'can' adentro
+									if (input_List[i + 4].equals("blocked?")) {
+										if (!checkNoComanIf(input_List, i + 7)) {
+											System.out.println("Error: Le faltan o le sobran comendos al if");
+											return false;
+										}
+									} else {
+										if (!checkNoComanIf(input_List, i + 8)) {
+											System.out.println("Error: Le faltan o le sobran comendos al if");
+											return false;
+										}
+									}
+								}
+							} else {
+								System.out.println(
+										"Error: falta el condicional del if, se esperaba un condicional pero se encontro: "
+												+ input_List[i + 2]);
+								return false;
 							}
 						} else {
-							System.out.println("Error: falta el condicional del if, se esperaba un condicional pero se encontro: " + input_List[i+2]);
+							System.out.println("Error: el if no puede ser vacio");
 							return false;
 						}
-					} else {
-						System.out.println("Error: el if no puede ser vacio");
+					}
+
+				}
+				
+				//aqui debe verificar el numero de parametros
+				if (esFuncion(input_List[i]) && !input_List[i - 1].equals("define")) {
+
+					int j = funciones.get(input_List[i]);
+					for (int k = j; k > 0; k--) {
+						boolean esVar = (variables.containsKey(input_List[i + k]));
+						if (esVar) {
+							if (variables.get(input_List[i + k]) < 0) {
+								System.out.println("Error: no puedes llamar una variable no declarada");
+								return false;
+							}
+						}
+						boolean esInt = isNumeric(input_List[i + k]);
+						if (!esVar && !esInt) {
+							System.out.println("Error: se esperaba una variable o un numero pero se encontro: "
+									+ input_List[i + 1] + " no se cumplen los parametros de la funcion");
+							return false;
+						}
+
+					}
+
+					if (!input_List[i + j + 1].equals(")")) {
+						System.out.println("Error: hay menos o mas parametros de los solicitados");
+						return false;
+					}
+
+				}
+				if (!esFuncion(input_List[i]) && !esComando(input_List[i]) && !input_List[i].equals("(")
+						&& !input_List[i].equals(")")
+						&& !(esD(input_List[i]) | esO(input_List[i]) | isNumeric(input_List[i]))
+						&& !variables.containsKey(input_List[i])) {
+					System.out.println("Error: comando desconocido: " + input_List[i]);
+					return false;
+
+				}
+
+				if (input_List[i].equals("(") && input_List[i + 2].equals(")")) {
+					if (isNumeric(input_List[i + 1]) || variables.containsKey(input_List[i + 1])) {
+						System.out.println("no puede haber algo de la forma ( x )");
 						return false;
 					}
 				}
 
 			}
-//aqui debe verificar el numero de parametros
-			if (esFuncion(input_List[i]) && !input_List[i-1].equals("define")) {
-				
-				int j = funciones.get(input_List[i]);
-				for (int k = j; k > 0; k--) {
-					boolean esVar = (variables.containsKey(input_List[i + k]));
-					if(esVar ){
-						if(variables.get(input_List[i + k])<0){
-							System.out.println("Error: no puedes llamar una variable no declarada");
-							return false;
-						}
-					}
-					boolean esInt = isNumeric(input_List[i + k]);
-					if (!esVar && !esInt) {
-						System.out.println("Error: se esperaba una variable o un numero pero se encontro: "
-								+ input_List[i + 1] + " no se cumplen los parametros de la funcion");
-						return false;
-					}
-
-				}
-				
-				if(!input_List[i + j+1].equals(")")){
-					System.out.println("Error: hay menos o mas parametros de los solicitados");
-					return false;
-				}
-				
-			}
-			if (!esFuncion(input_List[i]) && !esComando(input_List[i]) && !input_List[i].equals("(")
-					&& !input_List[i].equals(")")
-					&& !(esD(input_List[i]) | esO(input_List[i]) | isNumeric(input_List[i]))
-					&& !variables.containsKey(input_List[i])) {
-				System.out.println("Error: comando desconocido: " + input_List[i]);
-				return false;
-
-			}
-
-			if (input_List[i].equals("(") && input_List[i + 2].equals(")")) {
-				if (isNumeric(input_List[i + 1]) || variables.containsKey(input_List[i + 1])) {
-					System.out.println("no puede haber algo de la forma ( x )");
-					return false;
-				}
-			}
-			
-		}
-		}
-		catch (Exception e) {
-			valido=false;
+		} catch (Exception e) {
+			valido = false;
 		}
 
 		return valido;
@@ -522,8 +493,6 @@ public class Robot {
 		return re;
 	}
 
-	// Saque estos metodos para que el codigo fuera un poco mas 'reciclable' esto
-	// nos puede ayudar para definir las funciones, blckes y ifs
 	public static boolean checkBloqued(String[] list, int pos) {
 		if (!(list[pos + 1]).equals(")")) {
 			System.out.println("Error: deberia ser ')' pero se introdujo." + list[pos + 1]);
@@ -615,22 +584,21 @@ public class Robot {
 		boolean re = true;
 		int contPar = 0;
 		int contComm = 0;
-		for(int i = pos; i < list.length; i++) {
-			if(list[i].equals("(")) {
+		for (int i = pos; i < list.length; i++) {
+			if (list[i].equals("(")) {
 				contPar++;
 			}
-			if(list[i].equals(")")) {
+			if (list[i].equals(")")) {
 				contPar--;
 			}
-			if(contPar == 0) {
+			if (contPar == 0) {
 				contComm++;
 			}
-			if(contComm == 2) {
-				if(list[i+1].equals(")")) {
+			if (contComm == 2) {
+				if (list[i + 1].equals(")")) {
 					re = true;
 					break;
-				}
-				else {
+				} else {
 					re = false;
 					break;
 				}
