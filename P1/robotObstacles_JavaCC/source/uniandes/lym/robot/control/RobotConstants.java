@@ -26,6 +26,10 @@ public interface RobotConstants {
   int NUMERO = 11;
   /** RegularExpression Id. */
   int DIGIT = 12;
+  /** RegularExpression Id. */
+  int LPAR = 13;
+  /** RegularExpression Id. */
+  int RPAR = 14;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -47,6 +51,8 @@ public interface RobotConstants {
     "<DIGIT>",
     "\"(\"",
     "\")\"",
+    "\"block\"",
+    "\";\"",
     "\",\"",
   };
 

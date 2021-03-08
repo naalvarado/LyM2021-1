@@ -48,7 +48,35 @@ public class Robot
 		world = (RobotWorldDec) w;	
 	}
 
-	
+	public static void main(String args[]) {
+		Robot parcer = null;
+		StringBuffer sb = null;
+
+		try {
+			File archivo = new File("../P1/src/robot-conf");
+			FileReader fr = new FileReader(archivo);
+			BufferedReader br = new BufferedReader(fr);
+
+			String linea = "";
+			String input = "";
+			while ((linea = br.readLine()) != null) {
+				input = input + linea;
+			}
+		  parcer = new Robot(new FileInputStream("../P1/src/robot-conf"));
+		  sb = new StringBuffer(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+
+		try {
+		  parcer.programa(sb);
+		  System.out.println("ALL OK");
+		}
+		catch (Exception e) {
+		  System.out.println("NOT OK");
+		  System.out.println(e.getMessage());
+		}
+	}
 }
 PARSER_END(Robot)
 
@@ -83,8 +111,23 @@ TOKEN :
 {
 		<NUMERO: (<DIGIT>)+ >
 		|  	<#DIGIT: ["0"-"9"] >
+		| < LPAR : "(" >
+		| < RPAR : ")" >
 }
 
+void programa(StringBuffer sb) :
+{
+}
+{
+  command(sb) | bloque()
+}
+
+void bloque() :
+{
+}
+{
+  "block" ";"
+}
 
 	boolean command(StringBuffer sistema) :
 	{	
@@ -101,20 +144,6 @@ TOKEN :
 		|  <T_PONER> "("  objetoPoner() ")" {	salida = "Comando:  PONER"; }					  			
 		|  <T_RECOGER> "("  objetoRecoger()  ")"	{salida = "Comando:  Recoger";}
 		)  
-
-		{
-		    try {
-	    			        Thread.sleep(2000);
-	    			    } catch (InterruptedException e) {
-	    			        System.err.format("IOException: %s%n", e);
-	    			    }
-	    			 
-			sistema.append(salida);
-			return true;
-		}
-
-		
-
 		| <EOF> {return false;} 
 	}
 
