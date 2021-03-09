@@ -27,9 +27,43 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int DIGIT = 12;
   /** RegularExpression Id. */
-  int LPAR = 13;
+  int WORD = 13;
   /** RegularExpression Id. */
-  int RPAR = 14;
+  int LETTER = 14;
+  /** RegularExpression Id. */
+  int RPAR = 15;
+  /** RegularExpression Id. */
+  int WALK = 16;
+  /** RegularExpression Id. */
+  int ROTA = 17;
+  /** RegularExpression Id. */
+  int LOOK = 18;
+  /** RegularExpression Id. */
+  int DROP = 19;
+  /** RegularExpression Id. */
+  int FREE = 20;
+  /** RegularExpression Id. */
+  int PICK = 21;
+  /** RegularExpression Id. */
+  int GRAB = 22;
+  /** RegularExpression Id. */
+  int WATO = 23;
+  /** RegularExpression Id. */
+  int NOP = 24;
+  /** RegularExpression Id. */
+  int BLOCK = 25;
+  /** RegularExpression Id. */
+  int IF = 26;
+  /** RegularExpression Id. */
+  int DEF = 27;
+  /** RegularExpression Id. */
+  int BLKED = 28;
+  /** RegularExpression Id. */
+  int FACI = 29;
+  /** RegularExpression Id. */
+  int CAN = 30;
+  /** RegularExpression Id. */
+  int NOT = 31;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -49,14 +83,32 @@ public interface RobotConstants {
     "\"CHIPS\"",
     "<NUMERO>",
     "<DIGIT>",
-    "\"(\"",
+    "<WORD>",
+    "<LETTER>",
     "\")\"",
+    "\"(walk\"",
+    "\"(rotate\"",
+    "\"(look\"",
+    "\"(drop\"",
+    "\"(free\"",
+    "\"(pick\"",
+    "\"(grab\"",
+    "\"(walkTo\"",
+    "\"(NOP\"",
+    "\"(block\"",
+    "\"(if\"",
+    "\"(define\"",
+    "\"blocked?\"",
+    "\"facing?\"",
+    "\"(can\"",
+    "\"(not\"",
     "\"block\"",
     "\";\"",
     "\"funcion\"",
     "\"if\"",
     "\"definicon funcion\"",
     "\"definicion variable\"",
+    "\"(\"",
     "\",\"",
   };
 

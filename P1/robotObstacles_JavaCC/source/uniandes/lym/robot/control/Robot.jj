@@ -68,7 +68,7 @@ public class Robot
 		} 
 
 		try {
-		  parcer.programa(sb);
+		  parcer.programa();
 		  System.out.println("ALL OK");
 		}
 		catch (Exception e) {
@@ -108,17 +108,34 @@ TOKEN :
 
 TOKEN :
 {
-		<NUMERO: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
-		| < LPAR : "(" >
+		  <NUMERO: (<DIGIT>)+ >
+		| <#DIGIT: ["0"-"9"] >
+		| < WORD : (< LETTER > )+ >
+		| < #LETTER : ["a"-"z"] >
 		| < RPAR : ")" >
+		| < WALK : "(walk" >
+		| < ROTA : "(rotate" >
+		| < LOOK : "(look" >
+		| < DROP : "(drop" >
+		| < FREE : "(free" >
+		| < PICK : "(pick" >
+		| < GRAB : "(grab" >
+		| < WATO : "(walkTo" >
+		| < NOP : "(NOP" >
+		| < BLOCK : "(block" >
+		| < IF : "(if" >
+		| < DEF : "(define" >
+		| < BLKED: "blocked?" >
+		| < FACI : "facing?" >
+		| < CAN : "(can" >
+		| < NOT : "(not" >
 }
 
-void programa(StringBuffer sb) :
+void programa() :
 {
 }
 {
-  command(sb) | bloque() | fun() | ifS() | fundef() | vardef()
+  (comando() | bloque() | fun() | ifS() | fundef() | vardef())+
 }
 
 void bloque() :
@@ -154,6 +171,13 @@ void vardef() :
 }
 {
   "definicion variable" ";"
+}
+
+void comando() :
+{
+}
+{
+  < WALK > < RPAR >
 }
 
 	boolean command(StringBuffer sistema) :
