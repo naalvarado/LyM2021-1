@@ -2,7 +2,6 @@
 package uniandes.lym.robot.control;
 
 import uniandes.lym.robot.kernel.*;
-import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
@@ -23,7 +22,7 @@ public class Robot implements RobotConstants {
                 StringBuffer sb = null;
 
                 try {
-                        File archivo = new File("../P1/src/robot-conf");
+                        File archivo = new File("../P1/robotObstacles_JavaCC/source/uniandes/lym/robot/control/robot-conf");
                         FileReader fr = new FileReader(archivo);
                         BufferedReader br = new BufferedReader(fr);
 
@@ -32,7 +31,7 @@ public class Robot implements RobotConstants {
                         while ((linea = br.readLine()) != null) {
                                 input = input + linea;
                         }
-                  parcer = new Robot(new FileInputStream("../P1/src/robot-conf"));
+                  parcer = new Robot(new FileInputStream("../P1/robotObstacles_JavaCC/source/uniandes/lym/robot/control/robot-conf"));
                   sb = new StringBuffer(input);
                 } catch (Exception e) {
                         e.printStackTrace();
@@ -60,6 +59,18 @@ public class Robot implements RobotConstants {
     case 15:
       bloque();
       break;
+    case 17:
+      fun();
+      break;
+    case 18:
+      ifS();
+      break;
+    case 19:
+      fundef();
+      break;
+    case 20:
+      vardef();
+      break;
     default:
       jj_la1[0] = jj_gen;
       jj_consume_token(-1);
@@ -69,6 +80,26 @@ public class Robot implements RobotConstants {
 
   final public void bloque() throws ParseException {
     jj_consume_token(15);
+    jj_consume_token(16);
+  }
+
+  final public void fun() throws ParseException {
+    jj_consume_token(17);
+    jj_consume_token(16);
+  }
+
+  final public void ifS() throws ParseException {
+    jj_consume_token(18);
+    jj_consume_token(16);
+  }
+
+  final public void fundef() throws ParseException {
+    jj_consume_token(19);
+    jj_consume_token(16);
+  }
+
+  final public void vardef() throws ParseException {
+    jj_consume_token(20);
     jj_consume_token(16);
   }
 
@@ -131,13 +162,13 @@ public class Robot implements RobotConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case T_CHIPS:
       jj_consume_token(T_CHIPS);
-      jj_consume_token(17);
+      jj_consume_token(21);
       f = numero();
                                                world.putChips(f);
       break;
     case T_BALLOONS:
       jj_consume_token(T_BALLOONS);
-      jj_consume_token(17);
+      jj_consume_token(21);
       f = numero();
                                                            world.putBalloons(f);
       break;
@@ -153,13 +184,13 @@ public class Robot implements RobotConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case T_CHIPS:
       jj_consume_token(T_CHIPS);
-      jj_consume_token(17);
+      jj_consume_token(21);
       f = numero();
                                               world.pickChips(f);
       break;
     case T_BALLOONS:
       jj_consume_token(T_BALLOONS);
-      jj_consume_token(17);
+      jj_consume_token(21);
       f = numero();
                                                            world.grabBalloons(f);
       break;
@@ -206,7 +237,7 @@ public class Robot implements RobotConstants {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x81e1,0x1e0,0x1e1,0x600,0x600,};
+      jj_la1_0 = new int[] {0x1e81e1,0x1e0,0x1e1,0x600,0x600,};
    }
 
   /** Constructor with InputStream. */
@@ -323,7 +354,7 @@ public class Robot implements RobotConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[18];
+    boolean[] la1tokens = new boolean[22];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -337,7 +368,7 @@ public class Robot implements RobotConstants {
         }
       }
     }
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 22; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

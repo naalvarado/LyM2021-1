@@ -53,6 +53,10 @@ public interface RobotConstants {
     "\")\"",
     "\"block\"",
     "\";\"",
+    "\"funcion\"",
+    "\"if\"",
+    "\"definicon funcion\"",
+    "\"definicion variable\"",
     "\",\"",
   };
 

@@ -31,7 +31,6 @@ PARSER_BEGIN(Robot)
 package uniandes.lym.robot.control;
 
 import uniandes.lym.robot.kernel.*;
-import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
@@ -53,7 +52,7 @@ public class Robot
 		StringBuffer sb = null;
 
 		try {
-			File archivo = new File("../P1/src/robot-conf");
+			File archivo = new File("../P1/robotObstacles_JavaCC/source/uniandes/lym/robot/control/robot-conf");
 			FileReader fr = new FileReader(archivo);
 			BufferedReader br = new BufferedReader(fr);
 
@@ -62,7 +61,7 @@ public class Robot
 			while ((linea = br.readLine()) != null) {
 				input = input + linea;
 			}
-		  parcer = new Robot(new FileInputStream("../P1/src/robot-conf"));
+		  parcer = new Robot(new FileInputStream("../P1/robotObstacles_JavaCC/source/uniandes/lym/robot/control/robot-conf"));
 		  sb = new StringBuffer(input);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -119,7 +118,7 @@ void programa(StringBuffer sb) :
 {
 }
 {
-  command(sb) | bloque()
+  command(sb) | bloque() | fun() | ifS() | fundef() | vardef()
 }
 
 void bloque() :
@@ -127,6 +126,34 @@ void bloque() :
 }
 {
   "block" ";"
+}
+
+void fun() :
+{
+}
+{
+  "funcion" ";"
+}
+
+void ifS() :
+{
+}
+{
+  "if" ";"
+}
+
+void fundef() :
+{
+}
+{
+  "definicon funcion" ";"
+}
+
+void vardef() :
+{
+}
+{
+  "definicion variable" ";"
 }
 
 	boolean command(StringBuffer sistema) :
